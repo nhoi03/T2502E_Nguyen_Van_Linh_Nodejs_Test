@@ -1,0 +1,93 @@
+<h2 class="title">Tree Shop</h2>
+
+<% if (error) { %>
+<p class="error"><%= error %></p>
+<% } %>
+
+<div class="form-wrapper">
+    <form action="/add" method="POST">
+        <input name="treename" placeholder="Tree Name">
+        <textarea name="description" placeholder="Description"></textarea>
+        <input name="image" placeholder="Image URL">
+        <button class="btn-add">Add</button>
+    </form>
+
+    <form action="/reset" method="POST">
+        <button class="btn-reset">Reset</button>
+    </form>
+</div>
+
+<table class="tree-table">
+    <tr>
+        <th>#</th>
+        <th>Name</th>
+        <th>Image</th>
+        <th>Description</th>
+        <th>Action</th>
+    </tr>
+
+    <% trees.forEach((tree, i) => { %>
+    <tr>
+        <td><%= i+1 %></td>
+        <td><%= tree.treename %></td>
+        <td><img src="<%= tree.image %>" class="tree-img"></td>
+        <td><%= tree.description %></td>
+        <td>
+            <!-- EDIT -->
+            <button class="edit-btn"
+                data-id="<%= tree._id %>"
+                data-name="<%= tree.treename %>"
+                data-desc="<%= tree.description %>"
+                data-img="<%= tree.image %>">
+                ✏️
+            </button>
+            <!-- DELETE -->
+            <form action="/delete/<%= tree._id %>" method="POST" style="display:inline;">
+                <button onclick="return confirm('Delete?')">🗑️</button>
+            </form>
+        </td>
+    </tr>
+    <% }) %>
+</table>
+
+<!-- MODAL -->
+<div id="modal" class="modal">
+    <div class="modal-content">
+        <h3 style="text-align:center; margin-bottom:15px;">✏️ Edit Tree</h3>
+
+        <form id="editForm" method="POST">
+            <input id="name" name="treename" placeholder="Tree Name">
+            <textarea id="desc" name="description" placeholder="Description"></textarea>
+            <input id="img" name="image" placeholder="Image URL">
+
+            <div class="modal-actions">
+                <button type="submit" class="btn-update">Update</button>
+                <button type="button" class="btn-cancel" onclick="closeModal()">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function openEditModal(id, name, desc, img) {
+    document.getElementById('modal').style.display = 'flex';
+
+    document.getElementById('name').value = name;
+    document.getElementById('desc').value = desc;
+    document.getElementById('img').value = img;
+
+    document.getElementById('editForm').action = '/update/' + id;
+}
+</script>
+<script>
+document.querySelectorAll('.edit-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        openEditModal(
+            btn.dataset.id,
+            btn.dataset.name,
+            btn.dataset.desc,
+            btn.dataset.img
+        );
+    });
+});
+</script>
