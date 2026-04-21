@@ -1,6 +1,7 @@
 const treeService = require('../services/tree.service');
+const Tree = require('../models/tree.model'); // chỉnh đúng path nếu khác
 
-// 4. Show all trees
+
 const getHome = async (req, res) => {
     try {
         const trees = await treeService.getAllTrees();
@@ -16,7 +17,7 @@ const getHome = async (req, res) => {
     }
 };
 
-// About page
+
 const getAbout = (req, res) => {
     res.render('about', {
         currentPage: 'about'
@@ -28,30 +29,27 @@ const addTree = async (req, res) => {
     try {
         const { treename, description, image } = req.body;
 
-        
-        if (!treename || !description) {
-            const trees = await treeService.getAllTrees();
+        console.log(req.body); // 👈 xem dữ liệu gửi lên
 
-            return res.render('index', {
-                trees,
-                error: 'Tree Name and Description are required!',
-                currentPage: 'home'
-            });
-        }
+        await treeService.createTree({
+            treename,
+            description,
+            image
+        });
 
-        // 👉 Add to MongoDB
-        await treeService.createTree(treename, description, image);
+        res.redirect('/trees');
 
-        res.redirect('/');
     } catch (error) {
-        console.error(error);
+        console.error('ADD ERROR:', error); // 👈 xem lỗi thật
         res.send('Error adding tree');
     }
 };
-
-
 const resetTrees = async (req, res) => {
     try {
+        if (req.body.confirm !== 'true') {
+            return res.send('Unauthorized');
+        }
+
         await treeService.deleteAllTrees();
         res.redirect('/');
     } catch (error) {
@@ -59,23 +57,51 @@ const resetTrees = async (req, res) => {
         res.send('Error resetting data');
     }
 };
-// DELETE
+
 const deleteTree = async (req, res) => {
-    await treeService.deleteTreeById(req.params.id);
-    res.redirect('/');
+    try {
+        const id = req.params.id;
+
+        await Tree.findByIdAndDelete(id);
+
+        res.redirect('/trees'); // hoặc '/'
+    } catch (error) {
+        console.error("DELETE ERROR:", error);
+        res.send("Delete failed");
+    }
 };
 
-// UPDATE
+
 const updateTree = async (req, res) => {
-    const { treename, description, image } = req.body;
+    try {
+        const { treename, description, image } = req.body;
 
-    await treeService.updateTree(req.params.id, {
-        treename,
-        description,
-        image
-    });
+        await Tree.findByIdAndUpdate(
+            req.params.id,
+            {
+                treename,
+                description,
+                image
+            },
+            { new: true }
+        );
 
-    res.redirect('/');
+        res.redirect('/trees');
+    } catch (error) {
+        console.log("UPDATE ERROR:", error);
+        res.send("Error updating");
+    }
+};
+
+const getAllTrees = async (req, res) => {
+    try {
+        const trees = await treeService.getAllTrees();
+
+        res.render('table', { trees });
+    } catch (error) {
+        console.error(error);
+        res.send('Error loading trees');
+    }
 };
 
 module.exports = {
@@ -84,5 +110,6 @@ module.exports = {
     addTree,
     resetTrees,
     deleteTree,
-    updateTree
+    updateTree,
+    getAllTrees
 };

@@ -4,90 +4,117 @@
 <p class="error"><%= error %></p>
 <% } %>
 
-<div class="form-wrapper">
-    <form action="/add" method="POST">
-        <input name="treename" placeholder="Tree Name">
-        <textarea name="description" placeholder="Description"></textarea>
-        <input name="image" placeholder="Image URL">
-        <button class="btn-add">Add</button>
-    </form>
+<div class="content-wrapper">
+            <!-- Content -->
 
-    <form action="/reset" method="POST">
-        <button class="btn-reset">Reset</button>
-    </form>
-</div>
+            <div  class="container-xxl grow container-p-y">
+              <div  class="app-ecommerce">
+                <!-- Add Product -->
+                <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-6 gap-4 gap-md-0">
+                  <div class="d-flex flex-column justify-content-center">
+                    <h4 class="mb-1">Add a new Tree</h4>
+                    <p class="mb-0"></p>
+                  </div>
+                  <div class="d-flex align-content-center flex-wrap gap-4">
+                    <form action="/reset" method="POST"
+                          onsubmit="return confirm('⚠️ Xoá toàn bộ cây?');">
+                      
+                      <input type="hidden" name="confirm" value="true">
 
-<table class="tree-table">
-    <tr>
-        <th>#</th>
-        <th>Name</th>
-        <th>Image</th>
-        <th>Description</th>
-        <th>Action</th>
-    </tr>
+                      <button class="btn btn-danger waves-effect">
+                        Reset Database
+                      </button>
+                    </form>
 
-    <% trees.forEach((tree, i) => { %>
-    <tr>
-        <td><%= i+1 %></td>
-        <td><%= tree.treename %></td>
-        <td><img src="<%= tree.image %>" class="tree-img"></td>
-        <td><%= tree.description %></td>
-        <td>
-            <!-- EDIT -->
-            <button class="edit-btn"
-                data-id="<%= tree._id %>"
-                data-name="<%= tree.treename %>"
-                data-desc="<%= tree.description %>"
-                data-img="<%= tree.image %>">
-                ✏️
-            </button>
-            <!-- DELETE -->
-            <form action="/delete/<%= tree._id %>" method="POST" style="display:inline;">
-                <button onclick="return confirm('Delete?')">🗑️</button>
-            </form>
-        </td>
-    </tr>
-    <% }) %>
-</table>
+                    <!-- SAVE DRAFT (optional) -->
+                    <button class="btn btn-outline-primary waves-effect">
+                      Save draft
+                    </button>
 
-<!-- MODAL -->
-<div id="modal" class="modal">
-    <div class="modal-content">
-        <h3 style="text-align:center; margin-bottom:15px;">✏️ Edit Tree</h3>
+                    <!-- ADD TREE -->
+                    <button form="treeForm" type="submit"
+                            class="btn btn-primary waves-effect waves-light">
+                      Add tree
+                    </button>
+                  </div>
+                </div>
 
-        <form id="editForm" method="POST">
-            <input id="name" name="treename" placeholder="Tree Name">
-            <textarea id="desc" name="description" placeholder="Description"></textarea>
-            <input id="img" name="image" placeholder="Image URL">
+                <form id="treeForm" action="/add" method="POST" class="row">
+                  <!-- First column-->
+                  <div class="col-12 col-lg-8">
 
-            <div class="modal-actions">
-                <button type="submit" class="btn-update">Update</button>
-                <button type="button" class="btn-cancel" onclick="closeModal()">Cancel</button>
+    
+                    
+                    <!-- tree Information -->
+                    <div class="card mb-6">
+                      <div class="card-header">
+                        <h5 class="card-tile mb-0">Tree information</h5>
+                      </div>
+                      <div class="card-body">
+                        <div class="form-floating form-floating-outline mb-5">
+                          <input type="text" class="form-control" id="tre-name" placeholder="Tree title" name="treename" aria-label="Tree title">
+                          <label for="ecommerce-product-name">Name</label>
+                        </div>
+
+                        
+                        <!-- Comment -->
+                        <div>
+                          <label class="mb-1">Description (Optional)</label>
+                          <div class="form-control p-0 pt-1">
+                            <div class="comment-toolbar border-0 border-bottom ql-toolbar ql-snow">
+                              <div class="d-flex justify-content-start">
+                                <span class="ql-formats me-0">
+                                  <button class="ql-bold" type="button"><svg viewBox="0 0 18 18"> <path class="ql-stroke" d="M5,4H9.5A2.5,2.5,0,0,1,12,6.5v0A2.5,2.5,0,0,1,9.5,9H5A0,0,0,0,1,5,9V4A0,0,0,0,1,5,4Z"></path> <path class="ql-stroke" d="M5,9h5.5A2.5,2.5,0,0,1,13,11.5v0A2.5,2.5,0,0,1,10.5,14H5a0,0,0,0,1,0,0V9A0,0,0,0,1,5,9Z"></path> </svg></button>
+                                  <button class="ql-italic" type="button"><svg viewBox="0 0 18 18"> <line class="ql-stroke" x1="7" x2="13" y1="4" y2="4"></line> <line class="ql-stroke" x1="5" x2="11" y1="14" y2="14"></line> <line class="ql-stroke" x1="8" x2="10" y1="14" y2="4"></line> </svg></button>
+                                  <button class="ql-underline" type="button"><svg viewBox="0 0 18 18"> <path class="ql-stroke" d="M5,3V9a4.012,4.012,0,0,0,4,4H9a4.012,4.012,0,0,0,4-4V3"></path> <rect class="ql-fill" height="1" rx="0.5" ry="0.5" width="12" x="3" y="15"></rect> </svg></button>
+                                  <button class="ql-list" value="ordered" type="button"><svg viewBox="0 0 18 18"> <line class="ql-stroke" x1="7" x2="15" y1="4" y2="4"></line> <line class="ql-stroke" x1="7" x2="15" y1="9" y2="9"></line> <line class="ql-stroke" x1="7" x2="15" y1="14" y2="14"></line> <line class="ql-stroke ql-thin" x1="2.5" x2="4.5" y1="5.5" y2="5.5"></line> <path class="ql-fill" d="M3.5,6A0.5,0.5,0,0,1,3,5.5V3.085l-0.276.138A0.5,0.5,0,0,1,2.053,3c-0.124-.247-0.023-0.324.224-0.447l1-.5A0.5,0.5,0,0,1,4,2.5v3A0.5,0.5,0,0,1,3.5,6Z"></path> <path class="ql-stroke ql-thin" d="M4.5,10.5h-2c0-.234,1.85-1.076,1.85-2.234A0.959,0.959,0,0,0,2.5,8.156"></path> <path class="ql-stroke ql-thin" d="M2.5,14.846a0.959,0.959,0,0,0,1.85-.109A0.7,0.7,0,0,0,3.75,14a0.688,0.688,0,0,0,.6-0.736,0.959,0.959,0,0,0-1.85-.109"></path> </svg></button>
+                                  <button class="ql-list" value="bullet" type="button"><svg viewBox="0 0 18 18"> <line class="ql-stroke" x1="6" x2="15" y1="4" y2="4"></line> <line class="ql-stroke" x1="6" x2="15" y1="9" y2="9"></line> <line class="ql-stroke" x1="6" x2="15" y1="14" y2="14"></line> <line class="ql-stroke" x1="3" x2="3" y1="4" y2="4"></line> <line class="ql-stroke" x1="3" x2="3" y1="9" y2="9"></line> <line class="ql-stroke" x1="3" x2="3" y1="14" y2="14"></line> </svg></button>
+                                  <button class="ql-link" type="button"><svg viewBox="0 0 18 18"> <line class="ql-stroke" x1="7" x2="11" y1="7" y2="11"></line> <path class="ql-even ql-stroke" d="M8.9,4.577a3.476,3.476,0,0,1,.36,4.679A3.476,3.476,0,0,1,4.577,8.9C3.185,7.5,2.035,6.4,4.217,4.217S7.5,3.185,8.9,4.577Z"></path> <path class="ql-even ql-stroke" d="M13.423,9.1a3.476,3.476,0,0,0-4.679-.36,3.476,3.476,0,0,0,.36,4.679c1.392,1.392,2.5,2.542,4.679.36S14.815,10.5,13.423,9.1Z"></path> </svg></button>
+                                  <button class="ql-image" type="button"><svg viewBox="0 0 18 18"> <rect class="ql-stroke" height="10" width="12" x="3" y="4"></rect> <circle class="ql-fill" cx="6" cy="7" r="1"></circle> <polyline class="ql-even ql-fill" points="5 12 5 11 7 9 8 10 11 7 13 9 13 12 5 12"></polyline> </svg></button>
+                                </span>
+                              </div>
+                            </div>
+                            <div class="comment-editor border-0 pb-1 ql-container ql-snow" id="ecommerce-category-description"><div class="ql-editor ql-blank" data-gramm="false" contenteditable="true" data-placeholder=""><p><br></p></div><div class="ql-clipboard" contenteditable="true" tabindex="-1"></div><div class="ql-tooltip ql-hidden"><a class="ql-preview" rel="noopener noreferrer" target="_blank" href="about:blank"></a><input type="text" data-formula="e=mc^2"  data-video="Embed URL"><a class="ql-action"></a><a class="ql-remove"></a></div></div>
+                            <input type="hidden" name="description" id="description">
+                          </div>
+                        </div>
+
+                        <div>
+                          <label class="mb-1">IMG</label>
+                          <input name="image" class="form-control" placeholder="Image URL">
+                        </div>
+                      </div>
+                    </div>
+                    <!-- /tree Information -->
+                    <!-- Media -->
+                    
+                    
+                    <!-- /Media -->
+                   
+                   
+                  </div>
+                  <!-- /Second column -->
+
+                </form>
+              </div>
             </div>
-        </form>
-    </div>
-</div>
+            <!-- / Content -->
+
+           
+            
+
+            <div class="content-backdrop fade"></div>
+          </div>
+
+
+
 
 <script>
-function openEditModal(id, name, desc, img) {
-    document.getElementById('modal').style.display = 'flex';
+  const quill = new Quill('#ecommerce-category-description', {
+    theme: 'snow'
+  });
 
-    document.getElementById('name').value = name;
-    document.getElementById('desc').value = desc;
-    document.getElementById('img').value = img;
-
-    document.getElementById('editForm').action = '/update/' + id;
-}
-</script>
-<script>
-document.querySelectorAll('.edit-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-        openEditModal(
-            btn.dataset.id,
-            btn.dataset.name,
-            btn.dataset.desc,
-            btn.dataset.img
-        );
-    });
-});
+  document.getElementById('treeForm').onsubmit = function () {
+    document.getElementById('description').value = quill.root.innerHTML;
+  };
 </script>
